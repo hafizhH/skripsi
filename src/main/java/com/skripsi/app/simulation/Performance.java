@@ -1,4 +1,4 @@
-package com.skripsi.app.utils;
+package com.skripsi.app.simulation;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.vms.Vm;
 
 public class Performance {
+  private String name;
 	private List<Cloudlet> finishedCloudlet;
 	private List<Vm> finishedVm;
 	
@@ -17,7 +18,8 @@ public class Performance {
 
 	private boolean isCalculated;
 
-  public Performance(List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
+  public Performance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
+    this.name = name;
 		this.finishedCloudlet = finishedCloudlet;
 		this.finishedVm = finishedVm;
 		this.isCalculated = false;
@@ -80,7 +82,7 @@ public class Performance {
 		System.out.println("VM Load DOI : " + this.doi);
 	}
 
-	private void calculate() {
+	public void calculate() {
 		this.execTime = calcExecTime();
 		this.doi = calcDOI();
 		this.makespan = calcMakespan();
@@ -88,16 +90,39 @@ public class Performance {
 		this.meanUtilization = calcMeanUtilization();
 	}
 
-	public static void compare(Performance a, Performance b) {
-		if (!a.isCalculated)
-			a.calculate();
-		if (!b.isCalculated)
-			b.calculate();
-		System.out.println("\nPerformance Comparison");
-		System.out.println("Total Finished Cloudlets : " + a.finishedCloudlet.size() + " vs " + b.finishedCloudlet.size());
-		System.out.println("Makespan : " + a.makespan + " vs " + b.makespan + " (diff : " + (a.makespan - b.makespan) + ")");
-		System.out.println("Avg. Response Time : " + a.avgResponseTime + " vs " + b.avgResponseTime + " (diff : " + (a.avgResponseTime - b.avgResponseTime) + ")");
-		System.out.println("VM Mean Utilization Rate : " + a.meanUtilization + " vs " + b.meanUtilization + " (diff : " + (a.meanUtilization - b.meanUtilization) + ")");
-		System.out.println("VM Load DOI : " + a.doi + " vs " + b.doi + " (diff : " + (a.doi - b.doi) + ")");
-	}
+  public String getName() {
+    return name;
+  }
+
+  public List<Cloudlet> getFinishedCloudlet() {
+    return finishedCloudlet;
+  }
+
+  public List<Vm> getFinishedVm() {
+    return finishedVm;
+  }
+
+  public double[] getExecTime() {
+    return execTime;
+  }
+
+  public double getDoi() {
+    return doi;
+  }
+
+  public double getMakespan() {
+    return makespan;
+  }
+
+  public double getAvgResponseTime() {
+    return avgResponseTime;
+  }
+
+  public double getMeanUtilization() {
+    return meanUtilization;
+  }
+
+  public boolean isCalculated() {
+    return isCalculated;
+  }
 }

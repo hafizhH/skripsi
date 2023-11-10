@@ -12,32 +12,35 @@ import java.util.function.Function;
 import com.skripsi.app.utils.Vector;
 
 public class WOA {
-  private Vector[] initialAgents;
-  private Vector[] agents;
-  private double[] agentFitness;
-  private Function<Integer, Double> fitness;
+  protected Vector[] initialAgents;
+  protected Vector[] agents;
+  protected double[] agentFitness;
+  protected Function<Integer, Double> fitness;
 
-  private double[] searchDimensions;
-  private int agentNum;
-  private int bestAgentIdx;
-  private double bestScore;
-  private int maxIteration;
+  protected double[] searchDimensions;
+  protected int agentNum;
+  protected int bestAgentIdx;
+  protected double bestScore;
+  protected int maxIteration;
 
-  public WOA(int maxIteration) {
+  public WOA(int maxIteration, int agentNum) {
     this.maxIteration = maxIteration;
+    this.agentNum = agentNum;
   }
 
-  public void init(double[] searchDimensions, int agentNum, Function<Integer, Double> fitness) {
+  public void init(double[] searchDimensions, Function<Integer, Double> fitness) {
     this.fitness = fitness;
     this.searchDimensions = searchDimensions;
-    this.agentNum = agentNum;
     this.initialAgents = new Vector[agentNum];
     this.agents = new Vector[agentNum];
     this.agentFitness = new double[agentNum];
     this.bestAgentIdx = 0;
     this.bestScore = 0.0;
+    populationInitialization();
+  }
+
+  public void populationInitialization() {
     Random rand = new Random();
-    // Random init
     for (int i = 0; i < agentNum; i++) {
       this.initialAgents[i] = new Vector(searchDimensions.length);
       this.agents[i] = new Vector(searchDimensions.length);
@@ -46,10 +49,9 @@ public class WOA {
         this.initialAgents[i].setElm(j, randInit);
         this.agents[i].setElm(j, randInit);
       }
-      
     }
   }
-
+  
   public void run() {
     for (int i = 0; i < maxIteration; i++) {
       for (int j = 0; j < agentNum; j++) {
@@ -64,9 +66,6 @@ public class WOA {
         
         double aVal = 2.0-(2.0*((double)i)/((double)maxIteration));
         Vector a = new Vector(searchDimensions.length, aVal);
-        // for (int k = 0; k < searchDimensions.length; k++) {
-        //   a.setElm(k, rand.nextDouble() * aMagMax - 1.0);
-        // }
         
         Vector A = Vector.subt(Vector.elmMul(Vector.mul(a, 2.0), r), a);
         Vector C = Vector.mul(r, 2.0);
@@ -129,7 +128,8 @@ public class WOA {
 
   private Vector spiral(Vector X, Vector Xbest, Vector C, Vector A, Double b, Double l) {
     Vector X1 = new Vector(searchDimensions.length);
-    Vector D = Vector.abs(Vector.subt(Xbest, X));
+    Vector sub = Vector.subt(Xbest, X);
+    Vector D = Vector.abs(sub);
     X1 = Vector.add(Vector.mul(D, (Double) Math.pow(Math.E, b*l) * Math.cos(2*Math.PI*l)), Xbest);
     return X1;
   }
