@@ -1,2 +1,3 @@
-unused
-target
+**/unused/
+target/
+.vscode/
