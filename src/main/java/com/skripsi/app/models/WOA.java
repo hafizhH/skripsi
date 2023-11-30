@@ -1,4 +1,4 @@
-package com.skripsi.app.woa;
+package com.skripsi.app.models;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,16 +16,20 @@ public class WOA {
   protected Vector[] agents;
   protected double[] agentFitness;
   protected Function<Integer, Double> fitness;
-
+  protected List<Double> bestFitnessHistory;
   protected double[] searchDimensions;
   protected int agentNum;
   protected int bestAgentIdx;
-  protected double bestScore;
+  protected double bestFitness;
   protected int maxIteration;
+  protected int convergenceIterationNum;
+  protected double convergenceEpsilon;
 
   public WOA(int maxIteration, int agentNum) {
     this.maxIteration = maxIteration;
     this.agentNum = agentNum;
+    this.convergenceIterationNum = 0;
+    this.convergenceEpsilon = Double.MIN_VALUE;
   }
 
   public void init(double[] searchDimensions, Function<Integer, Double> fitness) {
@@ -35,7 +39,8 @@ public class WOA {
     this.agents = new Vector[agentNum];
     this.agentFitness = new double[agentNum];
     this.bestAgentIdx = 0;
-    this.bestScore = 0.0;
+    this.bestFitness = 0.0;
+    this.bestFitnessHistory = new ArrayList<Double>();
     populationInitialization();
   }
 
@@ -53,8 +58,12 @@ public class WOA {
   }
   
   public void run() {
+    int constantFitnessIterCount = 0;
     for (int i = 0; i < maxIteration; i++) {
       for (int j = 0; j < agentNum; j++) {
+        if (i > 0 && j == bestAgentIdx) {
+          continue;
+        }
         Vector currentAgent = agents[j];
         Vector bestAgent = agents[bestAgentIdx];
         Random rand = new Random();
@@ -85,20 +94,41 @@ public class WOA {
         }
       }
 
+      // System.out.print(String.format("Iteration %d\t: ", i));
+
       int newBestAgentIdx = this.bestAgentIdx;
-      double newBestScore = this.bestScore;
+      double newBestFitness = this.bestFitness;
       for (int j = 0; j < agentNum; j++) {
         for (int k = 0; k < searchDimensions.length; k++) {
           agents[j].setElm(k, Math.max(0, Math.min(searchDimensions[k], agents[j].getElm(k))));
         }
         agentFitness[j] = fitness.apply((Integer) ((Number) Math.round(agents[j].getElm(0))).intValue());
-        if (agentFitness[j] >= newBestScore) {
-          newBestScore = agentFitness[j];
+        if (agentFitness[j] >= newBestFitness) {
+          newBestFitness = agentFitness[j];
           newBestAgentIdx = j;
         }
+        // System.out.print(String.format("(%2.2f,%2.8f) ", agents[j].getElm(0), agentFitness[j]));
       }
+
+      // System.out.print(String.format("[%d : (%2.2f,%2.8f)] ", newBestAgentIdx, agents[bestAgentIdx].getElm(0), agentFitness[bestAgentIdx]));
+      // System.out.println();
+      int prevBestAgentIdx = this.bestAgentIdx;
       this.bestAgentIdx = newBestAgentIdx;
-      this.bestScore = newBestScore;
+      this.bestFitness = newBestFitness;
+      this.bestFitnessHistory.add(bestFitness);
+
+      if (bestFitnessHistory.size() < 2 || convergenceIterationNum == 0) {
+        continue;
+      }
+      // if (Math.abs(bestFitness - bestFitnessHistory.get(bestFitnessHistory.size()-2)) < convergenceEpsilon) {
+      if (this.bestAgentIdx == prevBestAgentIdx) {
+        constantFitnessIterCount++;
+      } else {
+        constantFitnessIterCount = 0;
+      }
+      if (constantFitnessIterCount >= convergenceIterationNum) {
+        break;
+      }
     }
   }
 
@@ -110,6 +140,10 @@ public class WOA {
     List<Map.Entry<Vector, Double>> entryList = new ArrayList<Map.Entry<Vector, Double>>(hm.entrySet());
     Collections.sort(entryList, Comparator.comparingDouble(Map.Entry::getValue));
     return entryList;
+  }
+
+  public List<Double> getBestFitnessHistory() {
+    return this.bestFitnessHistory;
   }
 
   private Vector exploration(Vector X, Vector Xrand, Vector C, Vector A) {

@@ -1,5 +1,8 @@
-package com.skripsi.app.woa;
+package com.skripsi.app.models;
 
+import java.io.Console;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -7,6 +10,7 @@ import java.util.function.Function;
 import org.cloudsimplus.brokers.DatacenterBrokerAbstract;
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.core.CloudSimPlus;
+import org.cloudsimplus.core.events.SimEvent;
 import org.cloudsimplus.datacenters.Datacenter;
 import org.cloudsimplus.util.TimeUtil;
 import org.cloudsimplus.vms.Vm;
@@ -23,6 +27,7 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
   protected Cloudlet currentCloudlet;
   protected List<Vm> targetVmList;
   protected int selectedVmIndex;
+  protected List<List<Double>> bestFitnessHistory;
 
   public WOA_Broker(CloudSimPlus sim, String name, int maxIteration, int agentNum) {
     super(sim, name);
@@ -30,15 +35,23 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
     this.lastSelectedDcIndex = -1;
     this.selectedVmIndex = -1;
     this.woa = new WOA(maxIteration, agentNum);
+    this.bestFitnessHistory = new ArrayList<List<Double>>();
   }
 
   private void executeWOA(Cloudlet cl, Function<Integer, Double> fitnessFunction) {
+    // System.out.println("\nStarting cloudlet " + cl.getId());
     this.currentCloudlet = cl;
     woa.init(new double[]{ (double)this.targetVmList.size()-1 }, fitnessFunction);
     woa.run();
     List<Map.Entry<Vector, Double>> results = woa.getResults();
     int selIndex = (int) Math.round(results.get(0).getKey().getElm(0));
     this.selectedVmIndex = selIndex;
+    this.bestFitnessHistory.add(woa.getBestFitnessHistory());
+
+    // System.out.print("Cloudlet " + cl.getId() + "\t: ");
+    // for (int i = 0; i < results.size(); i++) {
+    //   System.out.print(String.format("(%2.2f,%2.2f) ", results.get(i).getKey().getElm(0), results.get(i).getValue()));
+    // }
     return;
   }
 
@@ -86,10 +99,19 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
       vmUtilSum += vmCompTimeSum[i] / makespan;
     }
     double meanUtilization = vmUtilSum / vmList.size();
-    double fitness = meanUtilization / makespan;
+    double utilDiffSum = 0.0;
+    for (int i = 0; i < vmList.size(); i++) {
+      utilDiffSum += ((vmCompTimeSum[i] / makespan) - meanUtilization) * ((vmCompTimeSum[i] / makespan) - meanUtilization);
+    }
+    double doi = Math.sqrt(utilDiffSum / vmList.size());
+    double fitness = 1 / (doi * makespan);
+    // double fitness = meanUtilization / makespan;
     return fitness;
   }
 
+  public List<List<Double>> getBestFitnessHistory() {
+    return this.bestFitnessHistory;
+  }
   
 
   @Override
@@ -130,4 +152,29 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
       return this.targetVmList.get(this.selectedVmIndex);
     }
   }
+
+  // DEBUG
+  @Override
+  public void processEvent(SimEvent evt) {
+    super.processEvent(evt);
+    if (evt.getTag() == 14) {
+      System.out.print(this.getName() + "\t: ");
+      int[] vmTaskCount = new int[this.getVmsNumber()];
+      Iterator<Cloudlet> it = this.getCloudletCreatedList().iterator();
+      while (it.hasNext()) {
+        vmTaskCount[(int)it.next().getVm().getId()]++;
+      }
+      for (int i = 0; i < vmTaskCount.length; i++) {
+        System.out.print(vmTaskCount[i] + " ");
+      }
+      // vmTaskCount.stream().forEach(cl -> System.out.print(cl.getVm().getId() + " "));
+      System.out.println();
+    }
+  }
+
+  // @Override
+  // public void requestShutdownWhenIdle() {
+  //   super.requestShutdownWhenIdle();
+  //   System.out.println(this.getVmCreatedList().stream().mapToDouble(vm -> vm.getLastBusyTime() - vm.getStartTime()).toArray().toString());
+  // }
 }

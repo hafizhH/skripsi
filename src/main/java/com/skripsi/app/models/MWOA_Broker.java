@@ -1,4 +1,4 @@
-package com.skripsi.app.woa;
+package com.skripsi.app.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +32,7 @@ public class MWOA_Broker extends WOA_Broker {
     this.selectedVmIndex = selIndex;
     Vector roundedSolution = new Vector(Arrays.asList(new Double[]{(double) Math.round(results.get(0).getKey().getElm(0))}));
     solutionHistory.add(roundedSolution);
+    this.bestFitnessHistory.add(mwoa.getBestFitnessHistory());
     return;
   }
 

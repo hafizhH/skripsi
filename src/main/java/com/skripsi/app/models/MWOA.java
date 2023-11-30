@@ -1,4 +1,4 @@
-package com.skripsi.app.woa;
+package com.skripsi.app.models;
 
 import java.util.List;
 import java.util.Random;
@@ -50,7 +50,7 @@ public class MWOA extends WOA {
     if (solutionHistory.size() == 0) {
       super.populationInitialization();
     } else {
-      weightedRandomPopulationInit(prevSolutionNum, allocatedAgentNum, 1.0);
+      weightedRandomPopulationInit(prevSolutionNum, allocatedAgentNum, 0.0);
     }
   }
 

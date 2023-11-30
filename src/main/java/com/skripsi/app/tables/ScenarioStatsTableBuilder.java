@@ -1,5 +1,9 @@
-package com.skripsi.app.utils;
+package com.skripsi.app.tables;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,7 +12,9 @@ import org.cloudsimplus.builders.tables.MarkdownTable;
 import org.cloudsimplus.builders.tables.Table;
 import org.cloudsimplus.builders.tables.TableBuilderAbstract;
 
-public class StatsTableBuilder extends TableBuilderAbstract<Stats> {
+import com.skripsi.app.utils.Stats;
+
+public class ScenarioStatsTableBuilder extends TableBuilderAbstract<Stats> {
   // public static final String DEF_FORMAT = "%d";
   // private static final String SECONDS = "Seconds";
   // private static final String CPU_CORES = "CPU cores";
@@ -22,13 +28,21 @@ public class StatsTableBuilder extends TableBuilderAbstract<Stats> {
   private String strFormat2 = "%-10.10s";
   private String realFormat = "%4.4f";
 
-  public StatsTableBuilder(String title, List<? extends Stats> list) {
+  public ScenarioStatsTableBuilder(String title, List<? extends Stats> list) {
     super(list);
     this.setTitle(title);
   }
 
-  public StatsTableBuilder(String title, List<? extends Stats> list, Table table) {
-    super(list, table);
+  public ScenarioStatsTableBuilder(String title, List<? extends Stats> list, String pathString) {
+    super(list);
+    CsvTable csvTable = new CsvTable();
+    try {
+      Path path = Paths.get(pathString, title + "-stats.csv");
+      csvTable.setPrintStream(new PrintStream(new File(path.toUri())));
+      super.setTable(csvTable);
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
     this.setTitle(title);
   }
 
@@ -51,19 +65,19 @@ public class StatsTableBuilder extends TableBuilderAbstract<Stats> {
       });
     } else {
       this.addColumn(this.getTable().newColumn(String.format(this.strFormat, "Stats"),
-          String.format(this.strFormat, "Name"), this.strFormat), (stats) -> {
+          String.format(this.strFormat, "Model"), this.strFormat), (stats) -> {
             return stats.getName();
           });
-      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Min"), "Secs", this.realFormat), (stats) -> {
+      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Min"), " ", this.realFormat), (stats) -> {
             return stats.calcQuartile()[0];
           });
-      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Max"), "Secs", this.realFormat), (stats) -> {
+      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Max"), " ", this.realFormat), (stats) -> {
             return stats.calcQuartile()[1];
           });
-      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Mean"), "Secs", this.realFormat), (stats) -> {
+      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Mean"), " ", this.realFormat), (stats) -> {
             return stats.calcMean();
           });
-      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Stdev"), "Secs", this.realFormat), (stats) -> {
+      this.addColumn(this.getTable().newColumn(String.format(this.strFormat2, "Stdev"), "", this.realFormat), (stats) -> {
             return stats.calcStdevP();
           });
     }
@@ -101,7 +115,7 @@ public class StatsTableBuilder extends TableBuilderAbstract<Stats> {
     // this.timeFormat), Cloudlet::getActualCpuTime);
   }
 
-  public StatsTableBuilder setRealFormat(String realFormat) {
+  public ScenarioStatsTableBuilder setRealFormat(String realFormat) {
     this.realFormat = (String) Objects.requireNonNullElse(realFormat, "");
     return this;
   }
@@ -110,7 +124,7 @@ public class StatsTableBuilder extends TableBuilderAbstract<Stats> {
     return this.realFormat;
   }
 
-  public StatsTableBuilder setStrFormat(String strFormat) {
+  public ScenarioStatsTableBuilder setStrFormat(String strFormat) {
     this.strFormat = (String) Objects.requireNonNullElse(strFormat, "");
     return this;
   }

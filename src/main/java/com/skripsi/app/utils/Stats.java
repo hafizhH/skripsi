@@ -97,6 +97,42 @@ public class Stats {
     return this.stdevP;
   }
 
+  public double[] getData() {
+    return data;
+  }
+
+  public void setData(double[] data) {
+    this.data = data;
+  }
+
+  public Double getMin() {
+    return min;
+  }
+
+  public Double getMax() {
+    return max;
+  }
+
+  public Double getMean() {
+    return mean;
+  }
+
+  public Double getVarianceS() {
+    return varianceS;
+  }
+
+  public Double getVarianceP() {
+    return varianceP;
+  }
+
+  public Double getStdevS() {
+    return stdevS;
+  }
+
+  public Double getStdevP() {
+    return stdevP;
+  }
+
   // public double maxNormalize(double x, double min, double max) {
   //   return (max - x)/(max - min);
   // }
