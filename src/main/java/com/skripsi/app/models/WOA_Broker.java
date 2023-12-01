@@ -1,6 +1,5 @@
 package com.skripsi.app.models;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -171,10 +170,4 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
       System.out.println();
     }
   }
-
-  // @Override
-  // public void requestShutdownWhenIdle() {
-  //   super.requestShutdownWhenIdle();
-  //   System.out.println(this.getVmCreatedList().stream().mapToDouble(vm -> vm.getLastBusyTime() - vm.getStartTime()).toArray().toString());
-  // }
 }

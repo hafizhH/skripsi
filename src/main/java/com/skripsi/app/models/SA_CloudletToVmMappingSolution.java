@@ -5,7 +5,6 @@ import java.util.function.BiFunction;
 
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.heuristics.CloudletToVmMappingSolution;
-import org.cloudsimplus.heuristics.Heuristic;
 import org.cloudsimplus.vms.Vm;
 
 public class SA_CloudletToVmMappingSolution extends CloudletToVmMappingSolution {

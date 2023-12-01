@@ -14,7 +14,7 @@ import org.cloudsimplus.builders.tables.TableBuilderAbstract;
 
 import com.skripsi.app.utils.Stats;
 
-public class ScenarioStatsTableBuilder extends TableBuilderAbstract<Stats> {
+public class ScenarioPerformanceStatsTableBuilder extends TableBuilderAbstract<Stats> {
   // public static final String DEF_FORMAT = "%d";
   // private static final String SECONDS = "Seconds";
   // private static final String CPU_CORES = "CPU cores";
@@ -28,12 +28,12 @@ public class ScenarioStatsTableBuilder extends TableBuilderAbstract<Stats> {
   private String strFormat2 = "%-10.10s";
   private String realFormat = "%4.4f";
 
-  public ScenarioStatsTableBuilder(String title, List<? extends Stats> list) {
+  public ScenarioPerformanceStatsTableBuilder(String title, List<? extends Stats> list) {
     super(list);
     this.setTitle(title);
   }
 
-  public ScenarioStatsTableBuilder(String title, List<? extends Stats> list, String pathString) {
+  public ScenarioPerformanceStatsTableBuilder(String title, List<? extends Stats> list, String pathString) {
     super(list);
     CsvTable csvTable = new CsvTable();
     try {
@@ -115,7 +115,7 @@ public class ScenarioStatsTableBuilder extends TableBuilderAbstract<Stats> {
     // this.timeFormat), Cloudlet::getActualCpuTime);
   }
 
-  public ScenarioStatsTableBuilder setRealFormat(String realFormat) {
+  public ScenarioPerformanceStatsTableBuilder setRealFormat(String realFormat) {
     this.realFormat = (String) Objects.requireNonNullElse(realFormat, "");
     return this;
   }
@@ -124,7 +124,7 @@ public class ScenarioStatsTableBuilder extends TableBuilderAbstract<Stats> {
     return this.realFormat;
   }
 
-  public ScenarioStatsTableBuilder setStrFormat(String strFormat) {
+  public ScenarioPerformanceStatsTableBuilder setStrFormat(String strFormat) {
     this.strFormat = (String) Objects.requireNonNullElse(strFormat, "");
     return this;
   }

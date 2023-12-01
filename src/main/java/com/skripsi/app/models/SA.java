@@ -1,12 +1,10 @@
 package com.skripsi.app.models;
 
 import org.cloudsimplus.heuristics.CloudletToVmMappingSimulatedAnnealing;
-import org.cloudsimplus.heuristics.CloudletToVmMappingSolution;
 import org.cloudsimplus.vms.Vm;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.distributions.ContinuousDistribution;

@@ -11,14 +11,14 @@ import org.cloudsimplus.hosts.Host;
 import org.cloudsimplus.util.Log;
 import org.cloudsimplus.vms.Vm;
 
-import com.skripsi.app.evaluation.Performance;
+import com.skripsi.app.evaluation.SimulationPerformance;
 import com.skripsi.app.models.MWOA_Broker;
 import com.skripsi.app.models.SA_Broker;
 import com.skripsi.app.models.WOA_Broker;
 
 public class Simulation {
 
-  public static Performance WOA(Environment environment, int envIndex, int maxIteration, int agentNum) {
+  public static SimulationPerformance WOA(Environment environment, int envIndex, int maxIteration, int agentNum) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -34,18 +34,15 @@ public class Simulation {
 
     simulation.start();
 
-    // new CloudletsTableBuilder(broker.getCloudletFinishedList()).build();
-    Performance perf = new Performance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
     for (int i = 0; i < perf.getExecTime().length; i++) {
       System.out.print(perf.getExecTime()[i] + " ");
     }
     System.out.println();
-    // perf.printEvaluation();
-    // perf.plotFitnessGraph(9);
     return perf;
   }
 
-  public static Performance MWOA(Environment environment, int envIndex, int maxIteration, int agentNum, int allocatedAgentNum, int prevSolutionNum) {
+  public static SimulationPerformance MWOA(Environment environment, int envIndex, int maxIteration, int agentNum, int allocatedAgentNum, int prevSolutionNum) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -61,18 +58,15 @@ public class Simulation {
 
     simulation.start();
 
-    // new CloudletsTableBuilder(broker.getCloudletFinishedList()).build();
-    Performance perf = new Performance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
     for (int i = 0; i < perf.getExecTime().length; i++) {
       System.out.print(perf.getExecTime()[i] + " ");
     }
     System.out.println();
-    // perf.printEvaluation();
-    // perf.plotFitnessGraph(9);
     return perf;
   }
 
-  public static Performance SA(Environment environment, int envIndex) {
+  public static SimulationPerformance SA(Environment environment, int envIndex) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -88,13 +82,11 @@ public class Simulation {
 
     simulation.start();
     
-    // new CloudletsTableBuilder(broker.getCloudletFinishedList()).build();
-    Performance perf = new Performance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
-    // perf.printEvaluation();
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
     return perf;
   }
 
-  public static Performance RR(Environment environment, int envIndex) {
+  public static SimulationPerformance RR(Environment environment, int envIndex) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -110,9 +102,7 @@ public class Simulation {
 
     simulation.start();
     
-    // new CloudletsTableBuilder(broker.getCloudletFinishedList()).build();
-    Performance perf = new Performance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
-    // perf.printEvaluation();
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
     return perf;
   }
 }

@@ -5,19 +5,17 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.function.BiFunction;
 
-import org.cloudsimplus.builders.tables.AbstractTable;
 import org.cloudsimplus.builders.tables.CsvTable;
 import org.cloudsimplus.builders.tables.TableBuilderAbstract;
 import org.cloudsimplus.builders.tables.TableColumn;
 
-import com.skripsi.app.evaluation.Performance;
+import com.skripsi.app.evaluation.SimulationPerformance;
 
-public class PerformanceTableBuilder extends TableBuilderAbstract<Performance> {
-  private List<? extends Performance> list;
+public class SimulationPerformancesTableBuilder extends TableBuilderAbstract<SimulationPerformance> {
+  private List<? extends SimulationPerformance> list;
 
-  public PerformanceTableBuilder(String title, List<? extends Performance> list, String pathString) {
+  public SimulationPerformancesTableBuilder(String title, List<? extends SimulationPerformance> list, String pathString) {
     super(list);
     this.list = list;
     CsvTable csvTable = new CsvTable();
@@ -60,13 +58,13 @@ public class PerformanceTableBuilder extends TableBuilderAbstract<Performance> {
     }
   }
 
-  public TableBuilderAbstract<Performance> addVmColumn(TableColumn col, int index) {
+  public TableBuilderAbstract<SimulationPerformance> addVmColumn(TableColumn col, int index) {
     return this.addColumn(col, (performance) -> {
       return performance.getFinishedVm().get(index).getCloudletScheduler().getCloudletFinishedList().size();
     });
   }
 
-  public TableBuilderAbstract<Performance> addVmProcTimeColumn(TableColumn col, int index) {
+  public TableBuilderAbstract<SimulationPerformance> addVmProcTimeColumn(TableColumn col, int index) {
     return this.addColumn(col, (performance) -> {
       return performance.getExecTime()[index];
     });

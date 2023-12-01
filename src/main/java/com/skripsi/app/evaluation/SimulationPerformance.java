@@ -1,22 +1,11 @@
 package com.skripsi.app.evaluation;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.cloudsimplus.cloudlets.Cloudlet;
-import org.cloudsimplus.cloudlets.CloudletExecution;
 import org.cloudsimplus.vms.Vm;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 
-public class Performance {
+public class SimulationPerformance {
   private String name;
 	private List<Cloudlet> finishedCloudlet;
 	private List<Vm> finishedVm;
@@ -31,11 +20,11 @@ public class Performance {
 
 	private boolean isCalculated;
 
-  public Performance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
+  public SimulationPerformance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
     this(name, finishedCloudlet, finishedVm, null);
 	}
 
-  public Performance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm, List<List<Double>> bestFitnessHistory) {
+  public SimulationPerformance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm, List<List<Double>> bestFitnessHistory) {
     this.bestFitnessHistory = bestFitnessHistory;
     this.name = name;
 		this.finishedCloudlet = finishedCloudlet;
@@ -43,30 +32,6 @@ public class Performance {
 		this.isCalculated = false;
 		calculate();
 	}
-
-	// private double[] calcExecTime() {
-	// 	double[] execTime = new double[finishedVm.size()];
-	// 	for (int i = 0; i < finishedCloudlet.size(); i++) {
-	// 		Cloudlet cl = finishedCloudlet.get(i);
-	// 		execTime[finishedVm.indexOf(cl.getVm())] += cl.getFinishTime() - cl.getStartTime();
-	// 	}
-	// 	return execTime;
-	// }
-
-  // private double[] calcExecTime() {
-	// 	double[] execTime = new double[finishedVm.size()];
-	// 	for (int i = 0; i < finishedVm.size(); i++) {
-  //     List<CloudletExecution> vmCloudlets = finishedVm.get(i).getCloudletScheduler().getCloudletFinishedList();
-  //     double start = Double.MAX_VALUE;
-  //     double end = 0.0;
-  //     for (int j = 0; j < vmCloudlets.size(); j++) {
-  //       start = Math.min(start, vmCloudlets.get(j).getCloudlet().getStartTime());
-  //       end = Math.max(end, vmCloudlets.get(j).getCloudlet().getFinishTime());
-  //     }
-	// 		execTime[i] += end - start;
-	// 	}
-	// 	return execTime;
-	// }
 
 	private double calcDOI() {
 		double execTimeSum = 0.0;
@@ -127,33 +92,25 @@ public class Performance {
     }
 	}
 
-	// public void printEvaluation() {
-	// 	System.out.println("Total Finished Cloudlets : " + this.finishedCloudlet.size());
-	// 	System.out.println("Makespan : " + this.makespan);
-	// 	System.out.println("Avg. Response Time : " + this.avgResponseTime);
-	// 	System.out.println("VM Mean Utilization Rate : " + this.meanUtilization);
-	// 	System.out.println("VM Load DOI : " + this.doi);
-	// }
+  // public void plotFitnessGraph(int index) {
+  //   DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+  //   for (int i = 0; i < bestFitnessHistory.get(index).size(); i++) {
+  //     line_chart_dataset.addValue(bestFitnessHistory.get(index).get(i), "Fitness Value", Integer.toString(i));
+  //   }
 
-  public void plotFitnessGraph(int index) {
-    DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-    for (int i = 0; i < bestFitnessHistory.get(index).size(); i++) {
-      line_chart_dataset.addValue(bestFitnessHistory.get(index).get(i), "Fitness Value", Integer.toString(i));
-    }
+  //   JFreeChart lineChartObject = ChartFactory.createLineChart("Fitness Function Convergence Graph", "Iteration", "Fitness Value",
+  //     line_chart_dataset,PlotOrientation.VERTICAL, true,true,false);
 
-    JFreeChart lineChartObject = ChartFactory.createLineChart("Fitness Function Convergence Graph", "Iteration", "Fitness Value",
-      line_chart_dataset,PlotOrientation.VERTICAL, true,true,false);
-
-    int width = 640;    /* Width of the image */
-    int height = 480;   /* Height of the image */
-    Path path = Paths.get("src/main/java/com/skripsi/app/output", String.format("%s-convergence-cl%s.jpeg", this.name, index));
-    File lineChart = new File(path.toUri());
-    try {
-      ChartUtils.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    } catch (Exception e) {
-      System.out.print(e);
-    }
-  }
+  //   int width = 640;    /* Width of the image */
+  //   int height = 480;   /* Height of the image */
+  //   Path path = Paths.get("src/main/java/com/skripsi/app/output", String.format("%s-convergence-cl%s.jpeg", this.name, index));
+  //   File lineChart = new File(path.toUri());
+  //   try {
+  //     ChartUtils.saveChartAsJPEG(lineChart, lineChartObject, width, height);
+  //   } catch (Exception e) {
+  //     System.out.print(e);
+  //   }
+  // }
 
   public String getName() {
     return name;

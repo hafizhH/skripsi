@@ -5,9 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import com.skripsi.app.evaluation.Performance;
-import com.skripsi.app.evaluation.TrialPerformances;
-import com.skripsi.app.tables.PerformanceTableBuilder;
+import com.skripsi.app.evaluation.SimulationPerformance;
+import com.skripsi.app.evaluation.ScenarioPerformance;
 
 public class Scenario {
   private String sceneName;
@@ -15,9 +14,9 @@ public class Scenario {
   private int modelNum;
   private Environment environment;
 
-  private TrialPerformances trialPerformancesWOA;
-  private TrialPerformances trialPerformancesMWOA;
-  private TrialPerformances trialPerformancesSA;
+  private ScenarioPerformance trialPerformancesWOA;
+  private ScenarioPerformance trialPerformancesMWOA;
+  private ScenarioPerformance trialPerformancesSA;
   // private PerformanceStats trialPerformancesRR;
 
   private int maxIteration;
@@ -72,46 +71,34 @@ public class Scenario {
     environment = new Environment(repetitionNum * modelNum);
     environment.initResources(cloudletConfig, cloudletDelay, vmConfig);
 
-    trialPerformancesWOA = new TrialPerformances("WOA");
-    trialPerformancesMWOA = new TrialPerformances("Modified WOA");
-    trialPerformancesSA = new TrialPerformances("SA");
-    // trialPerformancesRR = new PerformanceStats("Round-Robin");
+    trialPerformancesWOA = new ScenarioPerformance("WOA");
+    trialPerformancesMWOA = new ScenarioPerformance("Modified WOA");
+    trialPerformancesSA = new ScenarioPerformance("SA");
 
     for (int i = 0; i < repetitionNum; i++) {
       // System.out.println("\nTrial " + (i+1));
       System.out.println("\nStarted " + trialPerformancesWOA.getName() + " Trial " + i);
-      Performance perfWOA = Simulation.WOA(environment, i*modelNum, maxIteration, agentNum);
+      SimulationPerformance perfWOA = Simulation.WOA(environment, i*modelNum, maxIteration, agentNum);
       System.out.println("\nStarted " + trialPerformancesMWOA.getName() + " Trial " + i);
-      Performance perfMWOA = Simulation.MWOA(environment, i*modelNum + 1, maxIteration, agentNum, allocatedAgentNum, prevSolutionNum);
+      SimulationPerformance perfMWOA = Simulation.MWOA(environment, i*modelNum + 1, maxIteration, agentNum, allocatedAgentNum, prevSolutionNum);
       System.out.println("\nStarted " + trialPerformancesSA.getName() + " Trial " + i);
-      Performance perfSA = Simulation.SA(environment, i*modelNum + 2);
-      // Performance perfRR = Simulation.RR(environment, i*modelNum + 2);
+      SimulationPerformance perfSA = Simulation.SA(environment, i*modelNum + 2);
+      
       perfWOA.setName(perfWOA.getName() + " Trial " + (i+1));
       perfMWOA.setName(perfMWOA.getName() + " Trial " + (i+1));
       perfSA.setName(perfSA.getName() + " Trial " + (i+1));
       trialPerformancesWOA.addPerformance(perfWOA);
       trialPerformancesMWOA.addPerformance(perfMWOA);
       trialPerformancesSA.addPerformance(perfSA);
-      // trialPerformancesRR.addPerformance(perfRR);
-      // new PerformanceCompare(perfWOA, perfMWOA).printComparison();
     }
-
-    // trialPerformancesWOA.printStats();
-    // trialPerformancesMWOA.printStats();
-    // trialPerformancesSA.printStats();
-    // trialPerformancesRR.printStats();
-    TrialPerformances.printComparisonStats(new TrialPerformances[]{trialPerformancesWOA, trialPerformancesMWOA, trialPerformancesSA}, sceneName);
-    
-    Path path1 = Paths.get("src/main/java/com/skripsi/app/output/"+sceneName, "woa-performance.csv");
-    Path path2 = Paths.get("src/main/java/com/skripsi/app/output/"+sceneName, "mwoa-performance.csv");
-    Path path3 = Paths.get("src/main/java/com/skripsi/app/output/"+sceneName, "sa-performance.csv");
+    ScenarioPerformance.printComparisonStats(new ScenarioPerformance[]{trialPerformancesWOA, trialPerformancesMWOA, trialPerformancesSA}, sceneName);
 
     trialPerformancesWOA.outputTrialPerformanceResultToCSV(sceneName);
     trialPerformancesMWOA.outputTrialPerformanceResultToCSV(sceneName);
     trialPerformancesSA.outputTrialPerformanceResultToCSV(sceneName);
   }
 
-  public TrialPerformances[] getModelTrialPerformances() {
-    return new TrialPerformances[]{trialPerformancesWOA, trialPerformancesMWOA, trialPerformancesSA};
+  public ScenarioPerformance[] getModelTrialPerformances() {
+    return new ScenarioPerformance[]{trialPerformancesWOA, trialPerformancesMWOA, trialPerformancesSA};
   }
 }

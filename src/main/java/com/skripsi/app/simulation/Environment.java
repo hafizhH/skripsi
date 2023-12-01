@@ -11,9 +11,7 @@ import org.cloudsimplus.hosts.HostSimple;
 import org.cloudsimplus.resources.HarddriveStorage;
 import org.cloudsimplus.resources.Pe;
 import org.cloudsimplus.resources.PeSimple;
-import org.cloudsimplus.utilizationmodels.UtilizationModel;
 import org.cloudsimplus.utilizationmodels.UtilizationModelDynamic;
-import org.cloudsimplus.utilizationmodels.UtilizationModelFull;
 import org.cloudsimplus.vms.Vm;
 import org.cloudsimplus.vms.VmSimple;
 
@@ -28,9 +26,6 @@ public class Environment {
     hosts = new Host[cloneNum][];
     vms = new Vm[cloneNum][];
     cloudlets = new Cloudlet[cloneNum][];
-
-    // initRandomVms(cloneNum, 5, 1, 2, 1000, 5000, 1000);
-    // initRandomCloudlets(cloneNum, 10, 1000, 5000, 100, 1.0);
   }
 
   public void initResources(int[] cloudletConfig, double cloudletDelay, int[][] vmConfig) {
@@ -117,7 +112,6 @@ public class Environment {
 
   public void initRandomCloudlets(int cloneNum, int num, long minInst, long maxInst, long incInst, double interval) {
     Random rand = new Random();
-    
     for (int k = 0; k < cloneNum; k++) {
       cloudlets[k] = new Cloudlet[num];
     }
