@@ -18,7 +18,7 @@ import com.skripsi.app.models.WOA_Broker;
 
 public class Simulation {
 
-  public static SimulationPerformance WOA(Environment environment, int envIndex, int maxIteration, int agentNum) {
+  public static SimulationPerformance WOA(Environment environment, int trialIndex, int envIndex, int maxIteration, int agentNum) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -34,15 +34,16 @@ public class Simulation {
 
     simulation.start();
 
-    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
-    for (int i = 0; i < perf.getExecTime().length; i++) {
-      System.out.print(perf.getExecTime()[i] + " ");
-    }
-    System.out.println();
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), trialIndex, broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
+    // DEBUG
+    // for (int i = 0; i < perf.getExecTime().length; i++) {
+    //   System.out.print(perf.getExecTime()[i] + " ");
+    // }
+    // System.out.println();
     return perf;
   }
 
-  public static SimulationPerformance MWOA(Environment environment, int envIndex, int maxIteration, int agentNum, int allocatedAgentNum, int prevSolutionNum) {
+  public static SimulationPerformance MWOA(Environment environment, int trialIndex, int envIndex, int maxIteration, int agentNum, int allocatedAgentNum, int prevSolutionNum) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -58,15 +59,16 @@ public class Simulation {
 
     simulation.start();
 
-    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
-    for (int i = 0; i < perf.getExecTime().length; i++) {
-      System.out.print(perf.getExecTime()[i] + " ");
-    }
-    System.out.println();
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), trialIndex, broker.getCloudletFinishedList(), broker.getVmCreatedList(), broker.getBestFitnessHistory());
+    // DEBUG
+    // for (int i = 0; i < perf.getExecTime().length; i++) {
+    //   System.out.print(perf.getExecTime()[i] + " ");
+    // }
+    // System.out.println();
     return perf;
   }
 
-  public static SimulationPerformance SA(Environment environment, int envIndex) {
+  public static SimulationPerformance SA(Environment environment, int trialIndex, int envIndex) {
     Log.setLevel(ch.qos.logback.classic.Level.WARN);
     CloudSimPlus simulation = new CloudSimPlus();
     Host[] hosts = environment.getHosts(envIndex);
@@ -82,27 +84,32 @@ public class Simulation {
 
     simulation.start();
     
-    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
+    SimulationPerformance perf = new SimulationPerformance(broker.getName(), trialIndex, broker.getCloudletFinishedList(), broker.getVmCreatedList());
+    // DEBUG
+    // for (int i = 0; i < perf.getExecTime().length; i++) {
+    //   System.out.print(perf.getExecTime()[i] + " ");
+    // }
+    // System.out.println();
     return perf;
   }
 
-  public static SimulationPerformance RR(Environment environment, int envIndex) {
-    Log.setLevel(ch.qos.logback.classic.Level.WARN);
-    CloudSimPlus simulation = new CloudSimPlus();
-    Host[] hosts = environment.getHosts(envIndex);
-    Vm[] vmList = environment.getVms(envIndex);
-    Cloudlet[] cloudletList = environment.getCloudlets(envIndex);
+  // public static SimulationPerformance RR(Environment environment, int trialIndex, int envIndex) {
+  //   Log.setLevel(ch.qos.logback.classic.Level.WARN);
+  //   CloudSimPlus simulation = new CloudSimPlus();
+  //   Host[] hosts = environment.getHosts(envIndex);
+  //   Vm[] vmList = environment.getVms(envIndex);
+  //   Cloudlet[] cloudletList = environment.getCloudlets(envIndex);
 
-    DatacenterBrokerSimple broker = new DatacenterBrokerSimple(simulation);
-    VmAllocationPolicySimple allocationPolicy = new VmAllocationPolicySimple();
-    DatacenterSimple datacenter = new DatacenterSimple(simulation, Arrays.asList(hosts), allocationPolicy);
+  //   DatacenterBrokerSimple broker = new DatacenterBrokerSimple(simulation);
+  //   VmAllocationPolicySimple allocationPolicy = new VmAllocationPolicySimple();
+  //   DatacenterSimple datacenter = new DatacenterSimple(simulation, Arrays.asList(hosts), allocationPolicy);
 
-    broker.submitVmList(Arrays.asList(vmList));
-    broker.submitCloudletList(Arrays.asList(cloudletList));
+  //   broker.submitVmList(Arrays.asList(vmList));
+  //   broker.submitCloudletList(Arrays.asList(cloudletList));
 
-    simulation.start();
+  //   simulation.start();
     
-    SimulationPerformance perf = new SimulationPerformance(broker.getName(), broker.getCloudletFinishedList(), broker.getVmCreatedList());
-    return perf;
-  }
+  //   SimulationPerformance perf = new SimulationPerformance(broker.getName(), trialIndex, broker.getCloudletFinishedList(), broker.getVmCreatedList());
+  //   return perf;
+  // }
 }

@@ -78,21 +78,21 @@ public class SA_Broker extends DatacenterBrokerHeuristic {
   }
 
   // DEBUG
-  @Override
-  public void processEvent(SimEvent evt) {
-    super.processEvent(evt);
-    if (evt.getTag() == 14) {
-      System.out.print("\n" + this.getName() + "\t: ");
-      int[] vmTaskCount = new int[this.getVmsNumber()];
-      Iterator<Cloudlet> it = this.getCloudletCreatedList().iterator();
-      while (it.hasNext()) {
-        vmTaskCount[(int)it.next().getVm().getId()]++;
-      }
-      for (int i = 0; i < vmTaskCount.length; i++) {
-        System.out.print(vmTaskCount[i] + " ");
-      }
-      // vmTaskCount.stream().forEach(cl -> System.out.print(cl.getVm().getId() + " "));
-      System.out.println();
-    }
-  }
+  // @Override
+  // public void processEvent(SimEvent evt) {
+  //   super.processEvent(evt);
+  //   if (evt.getTag() == 14) {
+  //     System.out.print("\n" + this.getName() + "\t: ");
+  //     int[] vmTaskCount = new int[this.getVmsNumber()];
+  //     Iterator<Cloudlet> it = this.getCloudletCreatedList().iterator();
+  //     while (it.hasNext()) {
+  //       vmTaskCount[(int)it.next().getVm().getId()]++;
+  //     }
+  //     for (int i = 0; i < vmTaskCount.length; i++) {
+  //       System.out.print(vmTaskCount[i] + " ");
+  //     }
+  //     // vmTaskCount.stream().forEach(cl -> System.out.print(cl.getVm().getId() + " "));
+  //     System.out.println();
+  //   }
+  // }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.skripsi.app.simulation.Scenario;
 import com.skripsi.app.tables.HypothesisTestTableBuilder;
+import com.skripsi.app.tables.TexTable;
 
 public class PerformanceEvaluation {
   private List<Scenario> scenario;
@@ -50,13 +51,18 @@ public class PerformanceEvaluation {
     
     double[] meanUtilization1 = model1.getPerformanceList().stream().mapToDouble(perf -> perf.getMeanUtilization()).toArray();
     double[] meanUtilization2 = model2.getPerformanceList().stream().mapToDouble(perf -> perf.getMeanUtilization()).toArray();
-    HypothesisTest meanUtilizationTest = new HypothesisTest("Mean Utilization Test", meanUtilization1, meanUtilization2, 0.05, true);
+    HypothesisTest meanUtilizationTest = new HypothesisTest("Mean Utilization Test", meanUtilization1, meanUtilization2, 0.05, false);
     
-    double[] avgIterationCount1 = model1.getPerformanceList().stream().mapToDouble(perf -> perf.getAvgIterationCount()).toArray();
-    double[] avgIterationCount2 = model2.getPerformanceList().stream().mapToDouble(perf -> perf.getAvgIterationCount()).toArray();
-    HypothesisTest avgIterationCountTest = new HypothesisTest("Avg. Iteration Test", avgIterationCount1, avgIterationCount2, 0.05, true);
+    HypothesisTest avgIterationCountTest = null;
+    if (model1.getPerformanceList().get(0).isIncludeIteration() && model2.getPerformanceList().get(0).isIncludeIteration()) {
+      double[] avgIterationCount1 = model1.getPerformanceList().stream().mapToDouble(perf -> perf.getAvgIterationCount()).toArray();
+      double[] avgIterationCount2 = model2.getPerformanceList().stream().mapToDouble(perf -> perf.getAvgIterationCount()).toArray();
+      avgIterationCountTest = new HypothesisTest("Avg. Iteration Test", avgIterationCount1, avgIterationCount2, 0.05, true);
+    }
 
-    new HypothesisTestTableBuilder(model1.getName() + " vs " + model2.getName(), Arrays.asList(new HypothesisTest[] {doiTest, makespanTest, avgResponseTimeTest, meanUtilizationTest, avgIterationCountTest})).build();
-    new HypothesisTestTableBuilder(model1.getName() + " vs " + model2.getName(), Arrays.asList(new HypothesisTest[] {doiTest, makespanTest, avgResponseTimeTest, meanUtilizationTest, avgIterationCountTest}), "src/main/java/com/skripsi/app/output/").build();
+    HypothesisTest[] htList = (avgIterationCountTest != null) ? new HypothesisTest[] {doiTest, makespanTest, avgResponseTimeTest, meanUtilizationTest, avgIterationCountTest} : new HypothesisTest[] {doiTest, makespanTest, avgResponseTimeTest, meanUtilizationTest};
+
+    new HypothesisTestTableBuilder(model1.getName() + " vs " + model2.getName(), Arrays.asList(htList)).build();
+    new HypothesisTestTableBuilder(model1.getName() + " vs " + model2.getName(), Arrays.asList(htList), "src/main/java/com/skripsi/app/output/", new TexTable()).build();
   }
 }

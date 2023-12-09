@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 
+import org.cloudsimplus.builders.tables.AbstractTable;
 import org.cloudsimplus.builders.tables.CsvTable;
-import org.cloudsimplus.builders.tables.MarkdownTable;
-import org.cloudsimplus.builders.tables.Table;
 import org.cloudsimplus.builders.tables.TableBuilderAbstract;
 
 import com.skripsi.app.utils.Stats;
@@ -26,7 +26,7 @@ public class ScenarioPerformanceStatsTableBuilder extends TableBuilderAbstract<S
   // private String peFormat = "%d";
   private String strFormat = "%-30.30s";
   private String strFormat2 = "%-10.10s";
-  private String realFormat = "%4.4f";
+  private String realFormat = "%4.6f";
 
   public ScenarioPerformanceStatsTableBuilder(String title, List<? extends Stats> list) {
     super(list);
@@ -34,12 +34,19 @@ public class ScenarioPerformanceStatsTableBuilder extends TableBuilderAbstract<S
   }
 
   public ScenarioPerformanceStatsTableBuilder(String title, List<? extends Stats> list, String pathString) {
+    this(title, list, pathString, new CsvTable());
+  }
+
+  public ScenarioPerformanceStatsTableBuilder(String title, List<? extends Stats> list, String pathString, AbstractTable table) {
     super(list);
-    CsvTable csvTable = new CsvTable();
     try {
-      Path path = Paths.get(pathString, title + "-stats.csv");
-      csvTable.setPrintStream(new PrintStream(new File(path.toUri())));
-      super.setTable(csvTable);
+      String ext = (table.getClass() == TexTable.class) ? ".tex" : ".csv";
+      Path path = Paths.get(pathString, title + "-stats" + ext);
+      table.setPrintStream(new PrintStream(new File(path.toUri())));
+      if (table.getClass() == TexTable.class) {
+        ((TexTable)table).setRowOpeningClosingStr("& ", " \\\\ \\cline{2-6}%n");
+      }
+      super.setTable(table);
     } catch (Exception e) {
       System.err.println(e.toString());
     }
@@ -47,21 +54,22 @@ public class ScenarioPerformanceStatsTableBuilder extends TableBuilderAbstract<S
   }
 
   protected void createTableColumns() {
-    if (this.getTable().getClass() == CsvTable.class) {
+    if (this.getTable().getClass() == TexTable.class || this.getTable().getClass() == CsvTable.class) {
+      DecimalFormat df = new DecimalFormat("#0.#####");
       this.addColumn(this.getTable().newColumn("Stats"), (stats) -> {
         return stats.getName();
       });
       this.addColumn(this.getTable().newColumn("Min"), (stats) -> {
-        return stats.calcQuartile()[0];
+        return df.format(stats.calcQuartile()[0]);
       });
       this.addColumn(this.getTable().newColumn("Max"), (stats) -> {
-        return stats.calcQuartile()[1];
+        return df.format(stats.calcQuartile()[1]);
       });
       this.addColumn(this.getTable().newColumn("Mean"), (stats) -> {
-        return stats.calcMean();
+        return df.format(stats.calcMean());
       });
       this.addColumn(this.getTable().newColumn("Stdev"), (stats) -> {
-        return stats.calcStdevP();
+        return df.format(stats.calcStdevP());
       });
     } else {
       this.addColumn(this.getTable().newColumn(String.format(this.strFormat, "Stats"),

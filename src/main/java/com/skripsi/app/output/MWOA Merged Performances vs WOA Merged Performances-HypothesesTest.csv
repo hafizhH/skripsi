@@ -1,7 +1,0 @@
-Tests,Test Score,p-value,Result,Result2
-DOI Test,DOI Test,0.13070108827473192,false,false
-Makespan Test,Makespan Test,0.32163367727397996,false,false
-Avg. Response Time Test,Avg. Response Time Test,3.3133830951300646E-4,true,true
-Mean Utilization Test,Mean Utilization Test,0.16027407624467493,false,false
-Avg. Iteration Test,Avg. Iteration Test,NaN,false,false
-

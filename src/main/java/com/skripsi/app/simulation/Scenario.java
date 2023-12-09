@@ -75,14 +75,15 @@ public class Scenario {
     trialPerformancesMWOA = new ScenarioPerformance("Modified WOA");
     trialPerformancesSA = new ScenarioPerformance("SA");
 
+    System.out.println("Started " + sceneName);
     for (int i = 0; i < repetitionNum; i++) {
       // System.out.println("\nTrial " + (i+1));
-      System.out.println("\nStarted " + trialPerformancesWOA.getName() + " Trial " + i);
-      SimulationPerformance perfWOA = Simulation.WOA(environment, i*modelNum, maxIteration, agentNum);
-      System.out.println("\nStarted " + trialPerformancesMWOA.getName() + " Trial " + i);
-      SimulationPerformance perfMWOA = Simulation.MWOA(environment, i*modelNum + 1, maxIteration, agentNum, allocatedAgentNum, prevSolutionNum);
-      System.out.println("\nStarted " + trialPerformancesSA.getName() + " Trial " + i);
-      SimulationPerformance perfSA = Simulation.SA(environment, i*modelNum + 2);
+      // System.out.println("\nStarted " + trialPerformancesWOA.getName() + " Trial " + i);
+      SimulationPerformance perfWOA = Simulation.WOA(environment, i, i*modelNum, maxIteration, agentNum);
+      // System.out.println("\nStarted " + trialPerformancesMWOA.getName() + " Trial " + i);
+      SimulationPerformance perfMWOA = Simulation.MWOA(environment, i, i*modelNum + 1, maxIteration, agentNum, allocatedAgentNum, prevSolutionNum);
+      // System.out.println("\nStarted " + trialPerformancesSA.getName() + " Trial " + i);
+      SimulationPerformance perfSA = Simulation.SA(environment, i, i*modelNum + 2);
       
       perfWOA.setName(perfWOA.getName() + " Trial " + (i+1));
       perfMWOA.setName(perfMWOA.getName() + " Trial " + (i+1));
@@ -93,9 +94,9 @@ public class Scenario {
     }
     ScenarioPerformance.printComparisonStats(new ScenarioPerformance[]{trialPerformancesWOA, trialPerformancesMWOA, trialPerformancesSA}, sceneName);
 
-    trialPerformancesWOA.outputTrialPerformanceResultToCSV(sceneName);
-    trialPerformancesMWOA.outputTrialPerformanceResultToCSV(sceneName);
-    trialPerformancesSA.outputTrialPerformanceResultToCSV(sceneName);
+    trialPerformancesWOA.outputTrialPerformanceResult(sceneName);
+    trialPerformancesMWOA.outputTrialPerformanceResult(sceneName);
+    trialPerformancesSA.outputTrialPerformanceResult(sceneName);
   }
 
   public ScenarioPerformance[] getModelTrialPerformances() {

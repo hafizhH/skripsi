@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.skripsi.app.tables.SimulationPerformancesTableBuilder;
+import com.skripsi.app.tables.TexTable;
 import com.skripsi.app.tables.ScenarioPerformanceStatsTableBuilder;
 import com.skripsi.app.utils.Stats;
 
@@ -18,13 +19,19 @@ public class ScenarioPerformance {
   private Stats meanUtilization;
   private Stats avgIterationCount;
 
+  private boolean includeIteration;
+
   public ScenarioPerformance(String name) {
     this.name = name;
     this.performances = new ArrayList<SimulationPerformance>();
+    this.includeIteration = true;
   }
 
   public void addPerformance(SimulationPerformance perf) {
     this.performances.add(perf);
+    if (!perf.isIncludeIteration()) {
+      this.includeIteration = false;
+    }
   }
 
   public void processStats() {
@@ -38,18 +45,28 @@ public class ScenarioPerformance {
       makespanData[i] = performances.get(i).getMakespan();
       avgResponseTimeData[i] = performances.get(i).getAvgResponseTime();
       meanUtilizationData[i] = performances.get(i).getMeanUtilization();
-      avgIterationCountData[i] = performances.get(i).getAvgIterationCount();
+      if (this.includeIteration) {
+        avgIterationCountData[i] = performances.get(i).getAvgIterationCount();
+      }
     }
     this.doi = new Stats(this.getName(), doiData);
     this.makespan = new Stats(this.getName(), makespanData);
     this.avgResponseTime = new Stats(this.getName(), avgResponseTimeData);
     this.meanUtilization = new Stats(this.getName(), meanUtilizationData);
-    this.avgIterationCount = new Stats(this.getName(), avgIterationCountData);
+    if (this.includeIteration) {
+      this.avgIterationCount = new Stats(this.getName(), avgIterationCountData);
+    }
   }
 
   public void printStats() {
     processStats();
-    new ScenarioPerformanceStatsTableBuilder(name + " Performance Stats", Arrays.asList(new Stats[]{doi, makespan, avgResponseTime, meanUtilization, avgIterationCount})).build();
+    List<Stats> statList = new ArrayList<Stats>();
+    statList = Arrays.asList((this.includeIteration) ? new Stats[]{doi, makespan, avgResponseTime, meanUtilization, avgIterationCount} : new Stats[]{doi, makespan, avgResponseTime, meanUtilization});
+    new ScenarioPerformanceStatsTableBuilder(name + " Performance Stats", statList).build();
+  }
+
+  public void outputTrialPerformanceResult(String sceneName) {
+    new SimulationPerformancesTableBuilder(name, this.getPerformanceList(), "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable(), this.includeIteration).build();
   }
 
   public static void printComparisonStats(ScenarioPerformance[] perfStats, String sceneName) {
@@ -64,23 +81,21 @@ public class ScenarioPerformance {
       makespanStats.add(perfStats[i].getMakespan());
       avgResponseTimeStats.add(perfStats[i].getAvgResponseTime());
       meanUtilizationStats.add(perfStats[i].getMeanUtilization());
-      avgIterationCountStats.add(perfStats[i].getAvgIterationCount());
+      if (perfStats[i].isIncludeIteration()) {
+        avgIterationCountStats.add(perfStats[i].getAvgIterationCount());
+      }
     }
     new ScenarioPerformanceStatsTableBuilder("DOI Comparison", doiStats).build();
     new ScenarioPerformanceStatsTableBuilder("Makespan Comparison", makespanStats).build();
     new ScenarioPerformanceStatsTableBuilder("Avg. Response Time Comparison", avgResponseTimeStats).build();
     new ScenarioPerformanceStatsTableBuilder("Mean Utilization Comparison", meanUtilizationStats).build();
-    new ScenarioPerformanceStatsTableBuilder("Avg. Iteration Utilization Comparison", avgIterationCountStats).build();
+    new ScenarioPerformanceStatsTableBuilder("Avg. Iteration Comparison", avgIterationCountStats).build();
     
-    new ScenarioPerformanceStatsTableBuilder("DOI", doiStats, "src/main/java/com/skripsi/app/output/"+sceneName).build();
-    new ScenarioPerformanceStatsTableBuilder("Makespan", makespanStats, "src/main/java/com/skripsi/app/output/"+sceneName).build();
-    new ScenarioPerformanceStatsTableBuilder("Avg. Response Time", avgResponseTimeStats, "src/main/java/com/skripsi/app/output/"+sceneName).build();
-    new ScenarioPerformanceStatsTableBuilder("Mean Utilization", meanUtilizationStats, "src/main/java/com/skripsi/app/output/"+sceneName).build();
-    new ScenarioPerformanceStatsTableBuilder("Avg. Iteration Utilization", avgIterationCountStats, "src/main/java/com/skripsi/app/output/"+sceneName).build();
-  }
-
-  public void outputTrialPerformanceResultToCSV(String sceneName) {
-    new SimulationPerformancesTableBuilder(name, this.getPerformanceList(), "src/main/java/com/skripsi/app/output/"+sceneName).build();
+    new ScenarioPerformanceStatsTableBuilder("DOI", doiStats, "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable()).build();
+    new ScenarioPerformanceStatsTableBuilder("Makespan", makespanStats, "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable()).build();
+    new ScenarioPerformanceStatsTableBuilder("Avg. Response Time", avgResponseTimeStats, "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable()).build();
+    new ScenarioPerformanceStatsTableBuilder("Mean Utilization", meanUtilizationStats, "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable()).build();
+    new ScenarioPerformanceStatsTableBuilder("Avg. Iteration", avgIterationCountStats, "src/main/java/com/skripsi/app/output/"+sceneName, new TexTable()).build();
   }
 
   public static ScenarioPerformance merge(String newName, ScenarioPerformance[] tp) {
@@ -106,6 +121,10 @@ public class ScenarioPerformance {
 
   public String getName() {
     return name;
+  }
+
+  public boolean isIncludeIteration() {
+    return includeIteration;
   }
 
   public Stats getDoi() {

@@ -7,7 +7,9 @@ import org.cloudsimplus.vms.Vm;
 
 public class SimulationPerformance {
   private String name;
-	private List<Cloudlet> finishedCloudlet;
+  private int trialIndex;
+
+  private List<Cloudlet> finishedCloudlet;
 	private List<Vm> finishedVm;
   private List<List<Double>> bestFitnessHistory;
 	
@@ -18,18 +20,21 @@ public class SimulationPerformance {
 	private double meanUtilization;
   private double avgIterationCount;
 
-	private boolean isCalculated;
+  private boolean includeIteration;
+  private boolean isCalculated;
 
-  public SimulationPerformance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
-    this(name, finishedCloudlet, finishedVm, null);
+  public SimulationPerformance(String name, int trialIndex, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm) {
+    this(name, trialIndex, finishedCloudlet, finishedVm, null);
 	}
 
-  public SimulationPerformance(String name, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm, List<List<Double>> bestFitnessHistory) {
+  public SimulationPerformance(String name, int trialIndex, List<Cloudlet> finishedCloudlet, List<Vm> finishedVm, List<List<Double>> bestFitnessHistory) {
     this.bestFitnessHistory = bestFitnessHistory;
     this.name = name;
+    this.trialIndex = trialIndex;
 		this.finishedCloudlet = finishedCloudlet;
 		this.finishedVm = finishedVm;
 		this.isCalculated = false;
+    this.includeIteration = (bestFitnessHistory != null) ? true : false;
 		calculate();
 	}
 
@@ -87,7 +92,7 @@ public class SimulationPerformance {
 		this.makespan = calcMakespan();
 		this.avgResponseTime = calcAvgResponseTime();
 		this.meanUtilization = calcMeanUtilization();
-    if (this.bestFitnessHistory != null) {
+    if (this.includeIteration) {
       this.avgIterationCount = calcAvgIterationCount();
     }
 	}
@@ -114,6 +119,10 @@ public class SimulationPerformance {
 
   public String getName() {
     return name;
+  }
+  
+	public int getTrialIndex() {
+    return trialIndex;
   }
 
   public List<Cloudlet> getFinishedCloudlet() {
@@ -146,6 +155,10 @@ public class SimulationPerformance {
 
   public boolean isCalculated() {
     return isCalculated;
+  }
+
+	public boolean isIncludeIteration() {
+    return includeIteration;
   }
 
   public List<List<Double>> getBestFitnessHistory() {

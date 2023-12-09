@@ -23,12 +23,14 @@ public class WOA {
   protected double bestFitness;
   protected int maxIteration;
   protected int convergenceIterationNum;
+  protected int convergenceIterationNum2;
   protected double convergenceEpsilon;
 
   public WOA(int maxIteration, int agentNum) {
     this.maxIteration = maxIteration;
     this.agentNum = agentNum;
     this.convergenceIterationNum = 0;
+    this.convergenceIterationNum2 = 5;
     this.convergenceEpsilon = Double.MIN_VALUE;
   }
 
@@ -59,6 +61,7 @@ public class WOA {
   
   public void run() {
     int constantFitnessIterCount = 0;
+    int constantFitnessIterCount2 = 0;
     for (int i = 0; i < maxIteration; i++) {
       for (int j = 0; j < agentNum; j++) {
         if (i > 0 && j == bestAgentIdx) {
@@ -82,7 +85,7 @@ public class WOA {
         double l = rand.nextDouble() * 2.0 - 1.0;
         double p = rand.nextDouble();
 
-        if (p < 0.5) {
+        if (p < 0.3) {
           double AMag = Vector.magnitude(A);
           if (AMag < 1) {
             agents[j] = shrinkingEncircling(currentAgent, bestAgent, C, A);
@@ -117,7 +120,7 @@ public class WOA {
       this.bestFitness = newBestFitness;
       this.bestFitnessHistory.add(bestFitness);
 
-      if (bestFitnessHistory.size() < 2 || convergenceIterationNum == 0) {
+      if (bestFitnessHistory.size() < 2 || convergenceIterationNum == 0 || convergenceIterationNum2 == 0) {
         continue;
       }
       // if (Math.abs(bestFitness - bestFitnessHistory.get(bestFitnessHistory.size()-2)) < convergenceEpsilon) {
@@ -126,7 +129,12 @@ public class WOA {
       } else {
         constantFitnessIterCount = 0;
       }
-      if (constantFitnessIterCount >= convergenceIterationNum) {
+      if (Math.abs(bestFitness - bestFitnessHistory.get(bestFitnessHistory.size()-2)) < convergenceEpsilon) {
+        constantFitnessIterCount2++;
+      } else {
+        constantFitnessIterCount2 = 0;
+      }
+      if (constantFitnessIterCount >= convergenceIterationNum || constantFitnessIterCount2 >= convergenceIterationNum2) {
         break;
       }
     }

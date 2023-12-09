@@ -8,9 +8,13 @@ import java.util.function.Function;
 
 import org.cloudsimplus.brokers.DatacenterBrokerAbstract;
 import org.cloudsimplus.cloudlets.Cloudlet;
+import org.cloudsimplus.cloudlets.CloudletExecution;
+import org.cloudsimplus.cloudlets.CloudletSimple;
 import org.cloudsimplus.core.CloudSimPlus;
+import org.cloudsimplus.core.ExecDelayable;
 import org.cloudsimplus.core.events.SimEvent;
 import org.cloudsimplus.datacenters.Datacenter;
+import org.cloudsimplus.schedulers.cloudlet.CloudletScheduler;
 import org.cloudsimplus.util.TimeUtil;
 import org.cloudsimplus.vms.Vm;
 
@@ -153,21 +157,21 @@ public class WOA_Broker extends DatacenterBrokerAbstract {
   }
 
   // DEBUG
-  @Override
-  public void processEvent(SimEvent evt) {
-    super.processEvent(evt);
-    if (evt.getTag() == 14) {
-      System.out.print(this.getName() + "\t: ");
-      int[] vmTaskCount = new int[this.getVmsNumber()];
-      Iterator<Cloudlet> it = this.getCloudletCreatedList().iterator();
-      while (it.hasNext()) {
-        vmTaskCount[(int)it.next().getVm().getId()]++;
-      }
-      for (int i = 0; i < vmTaskCount.length; i++) {
-        System.out.print(vmTaskCount[i] + " ");
-      }
-      // vmTaskCount.stream().forEach(cl -> System.out.print(cl.getVm().getId() + " "));
-      System.out.println();
-    }
-  }
+  // @Override
+  // public void processEvent(SimEvent evt) {
+  //   super.processEvent(evt);
+  //   if (evt.getTag() == 14) {
+  //     System.out.print(this.getName() + "\t: ");
+  //     int[] vmTaskCount = new int[this.getVmsNumber()];
+  //     Iterator<Cloudlet> it = this.getCloudletCreatedList().iterator();
+  //     while (it.hasNext()) {
+  //       vmTaskCount[(int)it.next().getVm().getId()]++;
+  //     }
+  //     for (int i = 0; i < vmTaskCount.length; i++) {
+  //       System.out.print(vmTaskCount[i] + " ");
+  //     }
+  //     // vmTaskCount.stream().forEach(cl -> System.out.print(cl.getVm().getId() + " "));
+  //     System.out.println();
+  //   }
+  // }
 }
